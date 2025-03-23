@@ -24,22 +24,34 @@ export default function Home() {
       setIsLoading(false);
       return;
     }
+
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
-    console.log("Backend URL:", backendUrl);
-    const res = await axios.post(`${backendUrl}/api/admin/`, {
-      username,
-      password,
-    });
-    if (res?.data.token) {
-      const { token, admin, message } = res.data;
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("admin", JSON.stringify(admin));
-      console.log(message);
-      router.push("/dashboard");
-    } else {
-      setError(res?.data?.message);
+    if (!backendUrl) {
+      setError("Backend URL is not configured");
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    try {
+      const res = await axios.post(`${backendUrl}/api/admin/`, {
+        username,
+        password,
+      });
+
+      if (res?.data.token) {
+        const { token, admin, message } = res.data;
+        sessionStorage.setItem("token", token);
+        sessionStorage.setItem("admin", JSON.stringify(admin));
+        console.log(message);
+        router.push("/dashboard");
+      } else {
+        setError(res?.data?.message || "Login failed");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "An error occurred during login");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
