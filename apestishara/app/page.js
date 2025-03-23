@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
@@ -19,50 +19,44 @@ export default function Home() {
     setIsLoading(true);
     setError("");
 
-    if (!email || !password) {
-      setError("Please enter both email and password");
+    if (!username || !password) {
+      setError("Please enter both username and password");
       setIsLoading(false);
       return;
     }
-
-    console.log("Attempting to sign in with:", { email, password });
-
-    try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      console.log("Sign-in response:", res);
-
-      if (res?.error) {
-        setError(res.error);
-      } else {
-        router.push("/dashboard");
-      }
-    } catch (err) {
-      setError("Something went wrong, please try again");
-    } finally {
-      setIsLoading(false);
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+    console.log("Backend URL:", backendUrl);
+    const res = await axios.post(`${backendUrl}/api/admin/`, {
+      username,
+      password,
+    });
+    if (res?.data.token) {
+      const { token, admin, message } = res.data;
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("admin", JSON.stringify(admin));
+      console.log(message);
+      router.push("/dashboard");
+    } else {
+      setError(res?.data?.message);
     }
+    setIsLoading(false);
   };
 
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center min-h-screen w-full font-[family-name:var(--font-geist-sans)]">
+    <div className="flex flex-col md:flex-row justify-center items-center min-h-screen w-full font-sans">
       <div className="flex flex-col md:items-start items-center justify-center gap-8 w-full md:w-2/3 md:px-20">
         <div className="flex items-center md:items-start flex-col">
           <h1 className="text-xl font-bold">Hey Admin,👋</h1>
           <p className="text-gray-800">Please enter your credentials</p>
         </div>
-        <form className="w-[400px]" onSubmit={handleSubmit} method="POST">
+        <form className="max-w-[400px]" onSubmit={handleSubmit} method="POST">
           <div className="flex flex-col gap-4 mb-4">
             <Input
-              type="email"
-              placeholder="Email"
+              type="text"
+              placeholder="Username"
               className="w-full p-3 text-lg"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <Input
               type="password"
@@ -81,7 +75,7 @@ export default function Home() {
             <Button
               type="submit"
               size="lg"
-              disabled={isLoading || !email || !password}
+              disabled={isLoading || !username || !password}
               className="w-full"
             >
               {isLoading ? (
