@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export function MySideBar() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const router =useRouter();
@@ -23,10 +22,10 @@ export function MySideBar() {
   return (
     <div className="flex h-screen">
       {/* Mobile Sidebar Toggle Button */}
-      <div className="lg:hidden fixed top-4 right-4 z-40">
+      <div className="lg:hidden fixed top-4 right-6 z-40">
         <button
           onClick={toggleMobileSidebar}
-          className="p-2 bg-gray-800 text-white rounded-lg"
+          className="p-2 bg-primary text-white rounded-lg"
           aria-label="Toggle sidebar"
         >
           {isMobileSidebarOpen ? <X size={24} /> : <Menu size={24} />}
@@ -35,7 +34,7 @@ export function MySideBar() {
 
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden lg:flex flex-col h-full bg-gray-800 text-white transition-all duration-300 overflow-x-hidden ${
+        className={`hidden lg:flex flex-col h-full bg-primary text-white transition-all duration-300 overflow-x-hidden ${
           isSidebarCollapsed ? "w-20" : "w-64"
         }`}
       >
@@ -99,7 +98,7 @@ export function MySideBar() {
         />
 
         <aside
-          className={`fixed top-0 left-0 w-64 h-full bg-gray-800 text-white z-50 lg:hidden 
+          className={`fixed top-0 left-0 w-64 h-full bg-primary text-white z-50 lg:hidden 
                     transform transition-transform duration-300 ease-in-out ${
                       isMobileSidebarOpen
                         ? "translate-x-0"
@@ -130,7 +129,7 @@ export function MySideBar() {
           </nav>
           <button
             onClick={Logout}
-            className="mt-6 border-t border-gray-600 flex items-center px-4 py-3 hover:bg-gray-700 transition-all"
+            className="mt-6 border-t border-gray-600 flex items-center px-4 py-3 hover:bg-gray-700 transition-all w-full"
           >
             <LogOut />
             <span className="ml-3">Logout</span>
