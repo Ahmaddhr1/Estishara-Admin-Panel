@@ -9,7 +9,6 @@ export function MySideBar() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleMobileSidebar = () =>
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
   const toggleSidebarCollapse = () =>
