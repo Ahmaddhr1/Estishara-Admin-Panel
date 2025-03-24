@@ -53,7 +53,7 @@ export default function Home() {
       setIsLoading(false);
     }
   };
-  if (sessionStorage.getItem("token")) {
+  if (typeof window !== 'undefined' && sessionStorage.getItem("token")) {
     return router.push("/dashboard");
   } else {
     return (

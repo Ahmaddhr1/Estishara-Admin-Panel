@@ -3,20 +3,22 @@ import { useState } from "react";
 import { LogOut, Menu, X, ListCollapse } from "lucide-react";
 import tabs from "@/utils/SideBarTabs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function MySideBar() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const router =useRouter();
 
   const toggleMobileSidebar = () =>
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
   const toggleSidebarCollapse = () =>
     setIsSidebarCollapsed(!isSidebarCollapsed);
-  const Logout =() => {
+  const Logout = () => {
     sessionStorage.removeItem("token");
     router.push("/");
-  }
+  };
 
   return (
     <div className="flex h-screen">
@@ -76,17 +78,13 @@ export function MySideBar() {
           ))}
         </nav>
 
-        <div className="px-4 py-2 border-t border-gray-600">
-          <a
-            href="/logout"
-            className="flex items-center px-4 py-3 hover:bg-gray-700 transition-all"
-          >
-            <LogOut />
-            <span className={`ml-3 ${isSidebarCollapsed ? "hidden" : "block"}`}>
-              Logout
-            </span>
-          </a>
-        </div>
+        <button
+          onClick={Logout}
+          className="mt-6 border-t border-gray-600 flex items-center px-4 py-3 hover:bg-gray-700 transition-all"
+        >
+          <LogOut />
+          {!isSidebarCollapsed && <span className="ml-3">Logout</span>}
+        </button>
       </aside>
 
       {/* Mobile Sidebar */}
@@ -130,10 +128,12 @@ export function MySideBar() {
               </Link>
             ))}
           </nav>
-          <button onClick={Logout} className="mt-6 border-t border-gray-600 flex items-center px-4 py-3 hover:bg-gray-700 transition-all">
-              <LogOut />
-              <span className="ml-3">Logout</span>
-           
+          <button
+            onClick={Logout}
+            className="mt-6 border-t border-gray-600 flex items-center px-4 py-3 hover:bg-gray-700 transition-all"
+          >
+            <LogOut />
+            <span className="ml-3">Logout</span>
           </button>
         </aside>
       </>
