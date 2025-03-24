@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
   // If authenticated, render the layout
   return (
     <html lang="en">
-      <body className={`flex h-screen`}>
+      <body className={`flex max-h-[100vh]`}>
         <SidebarProvider>
           
           <MySideBar />

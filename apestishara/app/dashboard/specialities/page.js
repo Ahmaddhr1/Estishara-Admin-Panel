@@ -47,7 +47,7 @@ const Page = () => {
   }, []);
 
   return (
-    <section className="md:mt-0 mt-10">
+    <section className="section">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold">Specialities</h1>
         <Button onClick={showForm}>

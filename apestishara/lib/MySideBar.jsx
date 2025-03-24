@@ -34,7 +34,7 @@ export function MySideBar() {
 
       {/* Desktop Sidebar */}
       <aside
-        className={`hidden lg:flex flex-col h-full bg-primary text-white transition-all duration-300 overflow-x-hidden ${
+        className={`hidden lg:flex flex-col max-h-[100vh] bg-primary text-white transition-all duration-300 overflow-x-hidden ${
           isSidebarCollapsed ? "w-20" : "w-64"
         }`}
       >
