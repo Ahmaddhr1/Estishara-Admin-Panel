@@ -13,6 +13,10 @@ export function MySideBar() {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
   const toggleSidebarCollapse = () =>
     setIsSidebarCollapsed(!isSidebarCollapsed);
+  const Logout =() => {
+    sessionStorage.removeItem("token");
+    router.push("/");
+  }
 
   return (
     <div className="flex h-screen">
@@ -126,15 +130,11 @@ export function MySideBar() {
               </Link>
             ))}
           </nav>
-          <div className="mt-6 px-4 py-2 border-t border-gray-600">
-            <a
-              href="/logout"
-              className="flex items-center px-4 py-3 hover:bg-gray-700 transition-all"
-            >
+          <button onClick={Logout} className="mt-6 border-t border-gray-600 flex items-center px-4 py-3 hover:bg-gray-700 transition-all">
               <LogOut />
               <span className="ml-3">Logout</span>
-            </a>
-          </div>
+           
+          </button>
         </aside>
       </>
     </div>

@@ -13,7 +13,6 @@ const tabs =[
     { label: 'Pending Doctors', path: '/dashboard/pendingdoctors',icon:<TimerIcon />},
     { label: 'Specialities', path: '/dashboard/specialities' ,icon:<ListCheck />},
     { label: 'Admins', path: '/dashboard/admins',icon:<User /> },
-    { label: 'Logout', path: '/logout', icon:<LogOut /> },
 ]
 
 export default tabs;
