@@ -15,12 +15,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import PageHeader from "@/lib/PageHeader";
 
 const Page = () => {
   const [specialities, setSpecialities] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const { toast } = useToast();
 
   const fetchSpecialities = async () => {
     try {
@@ -28,11 +30,13 @@ const Page = () => {
       const response = await axios.get(
         process.env.NEXT_PUBLIC_BACKEND_URL + "/api/speciality/"
       );
-      console.log(response?.data);
       setSpecialities(response?.data);
-      setError(null);
     } catch (e) {
-      setError(e.message);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: e.message,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -48,18 +52,15 @@ const Page = () => {
 
   return (
     <section className="section">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">Specialities</h1>
-        <Button onClick={showForm}>
-          {isFormVisible ? "Cancel": "Add Speciality"}
-          {isFormVisible ? <X />: <Plus className="ml-2" /> }
-        </Button>
-      </div>
+      <PageHeader
+        name="Specialities"
+        buttonText="Add Speciality"
+        method={showForm}
+        state={isFormVisible}
+      />
       <div>
         {isLoading ? (
           <Loading />
-        ) : error ? (
-          <div className="text-red-500">{error}</div>
         ) : (
           <div>
             {isFormVisible && (
@@ -90,9 +91,9 @@ const Page = () => {
                     </TableCell>
                     <TableCell>
                       {speciality.logo && (
-                        <img 
-                          src={speciality.logo} 
-                          alt={speciality.title} 
+                        <img
+                          src={speciality.logo}
+                          alt={speciality.title}
                           className="h-10 w-10 object-cover"
                         />
                       )}

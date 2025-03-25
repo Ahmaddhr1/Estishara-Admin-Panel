@@ -6,56 +6,68 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const router = useRouter();
+  const { toast } = useToast()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
 
     if (!username || !password) {
-      setError("Please enter both username and password");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Please enter all fields",
+      })
       setIsLoading(false);
       return;
     }
 
     const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
     if (!backendUrl) {
-      setError("Backend URL is not configured");
+      toast({
+        variant: "destructive",
+        title: "Error !",
+        description: "Backend URL is not configured",
+      })
       setIsLoading(false);
       return;
     }
 
     try {
-      const res = await axios.post(`${backendUrl}/api/admin/`, {
+      const res = await axios.post(`${backendUrl}/api/admin/login`, {
         username,
         password,
       });
 
       if (res?.data.token) {
-        const { token, admin, message } = res.data;
+        const { token, admin} = res.data;
         sessionStorage.setItem("token", token);
         sessionStorage.setItem("admin", JSON.stringify(admin));
-        console.log(message);
         router.push("/dashboard");
       } else {
-        setError(res?.data?.message || "Login failed");
+        toast({
+          variant: "destructive",
+          title: "Error !",
+          description: res?.data?.message || "Login failed",
+        })
       }
     } catch (err) {
-      setError(err.response?.data?.message || "An error occurred during login");
+      toast({
+        variant: "destructive",
+        title: "Error !",
+        description: err.response?.data?.message || "An error occurred during login",
+      })
     } finally {
       setIsLoading(false);
     }
   };
-  if (typeof window !== 'undefined' && sessionStorage.getItem("token")) {
-    return router.push("/dashboard");
-  } else {
     return (
       <div className="flex flex-col md:flex-row justify-center items-center min-h-screen w-full font-sans">
         <div className="flex flex-col md:items-start items-center justify-center gap-8 w-full md:w-2/3 md:px-20">
@@ -80,11 +92,6 @@ export default function Home() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {error && (
-              <p className="text-red-500 text-sm bg-red-300 px-2 py-3 rounded-xl mb-3">
-                {error}
-              </p>
-            )}
             <div className="w-full md:w-[120px]">
               <Button
                 type="submit"
@@ -112,6 +119,5 @@ export default function Home() {
         </div>
       </div>
     );
-  }
 
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2, Plus, Trash2, X } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 import Loading from "@/lib/Loading";
 import {
@@ -15,29 +15,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import PageHeader from "@/lib/PageHeader";
+import { useRouter } from "next/navigation";
+import Alert from "@/lib/Alert";
 
 const Page = () => {
   const [admins, setAdmins] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [isSubLoading, setIsSubLoading] = useState(false)
+  const [isSubLoading, setIsSubLoading] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
 
   const fetchAdmins = async () => {
     try {
@@ -46,9 +40,15 @@ const Page = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`
       );
       setAdmins(response?.data || []);
-      setError(null);
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to fetch admins");
+      console.error("Fetch Admins Error:", e);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: String(
+          e.response?.data?.message || "Failed to fetch admins"
+        ),
+      });
     } finally {
       setIsLoading(false);
     }
@@ -74,13 +74,23 @@ const Page = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`,
         formData
       );
-      setAdmins(prevAdmins => [...prevAdmins, response.data.admin]);
+      toast({
+        title: "Success",
+        description: "Admin created successfully",
+      });
+      setAdmins((prevAdmins) => [...prevAdmins, response.data.admin]);
       setIsFormVisible(false);
-      setFormData({ username: "", password: "" });
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to create admin");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: String(
+          e.response?.data?.message || "Failed to create admin"
+        ),
+      });
     } finally {
-      setIsLoading(false);
+      setIsSubLoading(false);
+      setFormData({ username: "", password: "" });
     }
   };
 
@@ -90,9 +100,21 @@ const Page = () => {
       await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/${id}`
       );
-      setAdmins(prevAdmins => prevAdmins.filter(admin => admin._id !== id));
+      setAdmins((prevAdmins) => prevAdmins.filter((admin) => admin._id !== id));
+      toast({
+        variant: "success",
+        title: "Success",
+        description: "Admin deleted successfully",
+      });
     } catch (e) {
-      setError(e.response?.data?.message || "Failed to delete admin");
+      console.error("Delete Admin Error:", e);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: String(
+          e.response?.data?.message || "Failed to delete admin"
+        ),
+      });
     } finally {
       setDeleteLoading(false);
     }
@@ -102,23 +124,25 @@ const Page = () => {
     fetchAdmins();
   }, []);
 
+  const storedAdmin = JSON.parse(sessionStorage.getItem("admin"));
+
   return (
     <section className="section">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">Admins</h1>
-        <Button onClick={showForm}>
-          {isFormVisible ? "Cancel" : "Add Admin"}
-          {isFormVisible ? <X className="ml-2" /> : <Plus className="ml-2" />}
-        </Button>
-      </div>
-      {error && <div className="p-4 mb-4 text-red-500 bg-red-50 rounded-lg">{error}</div>}
-
+      <PageHeader
+        name="Admins"
+        buttonText="Add Admin"
+        method={showForm}
+        state={isFormVisible}
+      />
       {isLoading ? (
         <Loading />
       ) : (
         <div className="mt-5">
           {isFormVisible && (
-            <form onSubmit={handleSubmit} className="mb-6 p-4 border rounded-lg">
+            <form
+              onSubmit={handleSubmit}
+              className="mb-6 p-4 border rounded-lg"
+            >
               <div className="space-y-4">
                 <Input
                   type="text"
@@ -135,9 +159,9 @@ const Page = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   required
-                  minLength="6"
+                  minLength={6}
                 />
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isSubLoading}>
                   {isSubLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -162,44 +186,43 @@ const Page = () => {
             </TableHeader>
             <TableBody>
               {admins.length > 0 ? (
-                admins.map((admin, index) => (
-                  <TableRow key={admin._id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell className="font-medium">
-                      {admin.username}
-                    </TableCell>
-                    <TableCell>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="destructive" disabled={isLoading}>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will permanently delete the admin account.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel className="overflow-hidden">Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDelete(admin._id)}
-                              disabled={deleteLoading}
-                            >
-                              {deleteLoading ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              ) : null}
-                              Continue
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
-                  </TableRow>
-                ))
+                admins.map((admin, index) => {
+                  if (storedAdmin && storedAdmin.id === admin._id) {
+                    return (
+                      <TableRow key={admin._id}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell className="font-medium">
+                          {admin.username}{" "}
+                          <span className="text-gray-500 ml-3">
+                            (You're logged in)
+                          </span>
+                        </TableCell>
+                        <TableCell>-</TableCell>
+                      </TableRow>
+                    );
+                  }
+
+                  return (
+                    <TableRow key={admin._id}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell className="font-medium">
+                        {admin.username}
+                      </TableCell>
+                      <TableCell>
+                        <Alert
+                          loading={deleteLoading}
+                          trigger="Delete"
+                          title="Are you sure?"
+                          des="This action cannot be undone. This will
+                                permanently delete the admin account."
+                          action="Delete"
+                          func={handleDelete}
+                          para={admin._id}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               ) : (
                 <TableRow>
                   <TableCell colSpan={3} className="text-center">

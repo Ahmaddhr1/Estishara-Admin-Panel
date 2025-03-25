@@ -1,37 +1,33 @@
-"use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+
+import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { MySideBar } from "@/lib/MySideBar";
-import Loading from "@/lib/Loading";
+import { Toaster } from "@/components/ui/toaster";
 
-export default function RootLayout({ children }) {
-  const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+// Font imports
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
-  useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      router.push("/");
-    } else {
-      setIsAuthenticated(true);
-    }
-  }, [router]);
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
-  // If not authenticated, render nothing (or a loading spinner)
 
-  // If authenticated, render the layout
+
+export default function DashboardLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`flex max-h-[100vh]`}>
+    
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased flex max-h-[100vh]`}>
         <SidebarProvider>
-          
           <MySideBar />
-          <main className="flex-1 overflow-y-auto p-6">{ isAuthenticated? children: <Loading/>}</main>
+          <main className="flex-1 overflow-y-auto p-6">{children}</main>
         </SidebarProvider>
+        <Toaster />
       </body>
-    </html>
   );
 }
