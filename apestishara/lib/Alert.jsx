@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "@/components/ui/button"; // Make sure Button is imported
-import { Trash2 } from "lucide-react"; // Make sure Trash2 is imported
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react"; 
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,14 +12,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Loader2 } from "lucide-react";
 
-const Alert = ({ loading, trigger, title, des, action, func, para }) => {
+const Alert = ({ loading, trigger, title, des, action, func, para, Icon }) => {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" disabled={loading}>
-          <Trash2 className="mr-2 h-4 w-4" />
+          {Icon && <Icon className="h-4 w-4" />}
           {trigger}
         </Button>
       </AlertDialogTrigger>

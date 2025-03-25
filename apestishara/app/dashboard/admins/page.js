@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import axios from "axios";
 import Loading from "@/lib/Loading";
 import {
@@ -218,6 +218,7 @@ const Page = () => {
                           action="Delete"
                           func={handleDelete}
                           para={admin._id}
+                          Icon={Trash2}
                         />
                       </TableCell>
                     </TableRow>
