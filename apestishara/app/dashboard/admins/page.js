@@ -124,7 +124,7 @@ const Page = () => {
     fetchAdmins();
   }, []);
 
-  const storedAdmin = JSON.parse(sessionStorage.getItem("admin"));
+  const storedAdmin = typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("admin")) : null;
 
   return (
     <section className="section">
