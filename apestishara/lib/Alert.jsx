@@ -15,7 +15,7 @@ import {
 
 const Alert = ({ loading, trigger, title, des, action, func, para, Icon }) => {
   return (
-    <AlertDialog>
+    <AlertDialog className="px-3 md:px-0">
       <AlertDialogTrigger asChild>
         <Button variant="destructive" disabled={loading}>
           {Icon && <Icon className="h-4 w-4" />}
