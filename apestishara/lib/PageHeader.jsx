@@ -1,17 +1,29 @@
-import { Button } from '@/components/ui/button'
-import { Plus, X } from 'lucide-react'
-import React from 'react'
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Plus, X } from "lucide-react";
 
-const PageHeader = ({name, buttonText,method,state}) => {
+const PageHeader = ({
+  name,
+  buttonText,
+  method,
+  state,
+  isFormVisible = true,
+}) => {
   return (
-    <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold">{name}</h1>
-        <Button onClick={method}>
-          {state ? "Cancel": buttonText}
-          {state ? <X />: <Plus className="ml-2" /> }
+    <div
+      className={`flex ${
+        isFormVisible ? "items-start" : "items-center justify-between"
+      }`}
+    >
+      <h1 className="text-xl font-bold">{name}</h1>
+      {isFormVisible && (
+        <Button onClick={method} className="ml-auto">
+          {state ? "Cancel" : buttonText}
+          {state ? <X className="ml-2" /> : <Plus className="ml-2" />}
         </Button>
-      </div>
-  )
-}
+      )}
+    </div>
+  );
+};
 
-export default PageHeader
+export default PageHeader;
