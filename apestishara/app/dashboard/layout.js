@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export default function DashboardLayout({ children }) {
   return (
-    <QueryProvider >
+    
       <div
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex max-h-screen min-w-[100vw]`}
       >
@@ -29,6 +29,6 @@ export default function DashboardLayout({ children }) {
         </SidebarProvider>
         <Toaster />
       </div>
-    </QueryProvider>
+    
   );
 }

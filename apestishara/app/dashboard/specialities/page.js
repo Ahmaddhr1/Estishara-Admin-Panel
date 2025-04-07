@@ -18,9 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner"; // ✅ sonner toast
 
-// Fetch all specialities
 const fetchSpecialities = async () => {
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/speciality/`
@@ -29,10 +28,8 @@ const fetchSpecialities = async () => {
 };
 
 const Page = () => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // ✅ formData includes existingLogo to handle edits
   const [formData, setFormData] = useState({
     name: "",
     file: null,
@@ -49,12 +46,10 @@ const Page = () => {
     queryFn: fetchSpecialities,
   });
 
-  // ✅ Handles both create and update logic
   const specialityMutation = useMutation({
     mutationFn: async ({ name, file, existingLogo, id }) => {
       let logo = existingLogo;
 
-      // ✅ If user uploads a new file, upload it and replace the logo
       if (file) {
         const uploadForm = new FormData();
         uploadForm.append("file", file);
@@ -94,23 +89,16 @@ const Page = () => {
       }
     },
     onSuccess: () => {
-      toast({
-        title: isEditMode ? "Updated" : "Created",
-        description: `Speciality ${
-          isEditMode ? "updated" : "created"
-        } successfully`,
-      });
+      toast.success(
+        `Speciality ${isEditMode ? "updated" : "created"} successfully`
+      );
       queryClient.invalidateQueries({ queryKey: ["specialities"] });
       setIsFormVisible(false);
       setIsEditMode(false);
       setEditId(null);
     },
     onError: (e) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: String(e.response?.data?.message || "Failed to submit"),
-      });
+      toast.error(e.response?.data?.message || "Failed to submit");
     },
     onSettled: () => {
       setIsSubLoading(false);
@@ -124,20 +112,11 @@ const Page = () => {
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/speciality/${id}`
       ),
     onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Speciality deleted successfully",
-      });
+      toast.success("Speciality deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["specialities"] });
     },
     onError: (e) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: String(
-          e.response?.data?.message || "Failed to delete speciality"
-        ),
-      });
+      toast.error(e.response?.data?.message || "Failed to delete speciality");
     },
     onSettled: () => setDeleteLoading(false),
   });
@@ -167,7 +146,6 @@ const Page = () => {
     deleteSpeciality.mutate(id);
   };
 
-  // ✅ When toggling form, reset state
   const showForm = () => {
     setIsFormVisible(!isFormVisible);
     if (!isFormVisible) {
@@ -177,7 +155,6 @@ const Page = () => {
     }
   };
 
-  // ✅ When editing, keep current logo as existingLogo
   const handleEdit = (item) => {
     setIsEditMode(true);
     setEditId(item._id);
@@ -199,10 +176,7 @@ const Page = () => {
       ) : (
         <div className="mt-5">
           {isFormVisible && (
-            <form
-              onSubmit={handleSubmit}
-              className="mb-6 p-4 border rounded-lg"
-            >
+            <form onSubmit={handleSubmit} className="mb-6 p-4 border rounded-lg">
               <div className="space-y-4">
                 <Input
                   type="text"
@@ -213,7 +187,6 @@ const Page = () => {
                   required
                 />
 
-                {/* ✅ Show current logo preview in edit mode */}
                 {isEditMode && formData.existingLogo && (
                   <img
                     src={formData.existingLogo}
@@ -227,7 +200,6 @@ const Page = () => {
                   name="file"
                   accept="image/*"
                   onChange={handleInputChange}
-                  // ✅ Only required in create mode
                   required={!isEditMode}
                 />
 
@@ -286,7 +258,7 @@ const Page = () => {
                         onClick={() => handleEdit(item)}
                       >
                         <Pencil className="h-4 w-4" />
-                        Edit
+                        <span className="md:flex hidden">Edit</span>
                       </Button>
                       <Alert
                         loading={deleteLoading}

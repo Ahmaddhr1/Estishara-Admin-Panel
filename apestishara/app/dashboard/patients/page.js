@@ -4,7 +4,7 @@ import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Trash2, Search, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner"; // ✅ using sonner toast globally
 import PageHeader from "@/lib/PageHeader";
 import Alert from "@/lib/Alert";
 import {
@@ -33,7 +33,6 @@ const deletePatient = async (id) => {
 };
 
 const Page = () => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -41,34 +40,31 @@ const Page = () => {
   const {
     data: patients = [],
     isLoading,
-    isError,
-    error,
   } = useQuery({
     queryKey: ["patients"],
     queryFn: fetchPatients,
     staleTime: 5 * 60 * 1000,
     onError: (err) => {
-      toast({
-        variant: "destructive",
-        title: "Error fetching patients",
-        description: err instanceof Error ? err.message : "Unknown error",
-      });
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "An unknown error occurred while fetching patients"
+      );
     },
   });
 
   const mutation = useMutation({
     mutationFn: deletePatient,
     onSuccess: () => {
-      toast({ title: "Success", description: "Patient deleted successfully" });
+      toast.success("Patient deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["patients"] });
     },
     onError: (err) => {
-      toast({
-        variant: "destructive",
-        title: "Delete failed",
-        description:
-          err instanceof Error ? err.message : "Failed to delete patient",
-      });
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Failed to delete patient"
+      );
     },
     onSettled: () => setDeleteLoading(false),
   });
@@ -109,6 +105,7 @@ const Page = () => {
     <section className="section">
       <PageHeader name="Patients" isFormVisible={false} />
 
+      {/* Search */}
       <div className="mt-10">
         <div className="relative max-w-md">
           <div className="relative">
@@ -133,6 +130,7 @@ const Page = () => {
         </div>
       </div>
 
+      {/* Table */}
       <Table className="mt-3">
         <TableCaption>A list of all patients.</TableCaption>
         <TableHeader>

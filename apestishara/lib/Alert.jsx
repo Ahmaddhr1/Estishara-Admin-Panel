@@ -19,7 +19,7 @@ const Alert = ({ loading, trigger, title, des, action, func, para, Icon }) => {
       <AlertDialogTrigger asChild>
         <Button variant="destructive" disabled={loading}>
           {Icon && <Icon className="h-4 w-4" />}
-          {trigger}
+          <span className="md:flex hidden">{trigger}</span>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

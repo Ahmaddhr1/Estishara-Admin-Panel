@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner"; // ✅ using sonner toast now
 
 const fetchAdmins = async () => {
   const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`);
@@ -26,7 +26,6 @@ const fetchAdmins = async () => {
 };
 
 const Page = () => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({ username: "", password: "" });
@@ -43,16 +42,12 @@ const Page = () => {
     mutationFn: (formData) =>
       axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`, formData),
     onSuccess: () => {
-      toast({ title: "Success", description: "Admin created successfully" });
+      toast.success("Admin created successfully");
       queryClient.invalidateQueries({ queryKey: ["admins"] });
       setIsFormVisible(false);
     },
     onError: (e) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: String(e.response?.data?.message || "Failed to create admin"),
-      });
+      toast.error(e.response?.data?.message || "Failed to create admin");
     },
     onSettled: () => {
       setIsSubLoading(false);
@@ -63,15 +58,11 @@ const Page = () => {
   const deleteAdmin = useMutation({
     mutationFn: (id) => axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/${id}`),
     onSuccess: () => {
-      toast({ title: "Success", description: "Admin deleted successfully" });
+      toast.success("Admin deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["admins"] });
     },
     onError: (e) => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: String(e.response?.data?.message || "Failed to delete admin"),
-      });
+      toast.error(e.response?.data?.message || "Failed to delete admin");
     },
     onSettled: () => setDeleteLoading(false),
   });
@@ -99,7 +90,8 @@ const Page = () => {
     }
   };
 
-  const storedAdmin = typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("admin")) : null;
+  const storedAdmin =
+    typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("admin")) : null;
 
   return (
     <section className="section">
