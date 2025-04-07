@@ -21,11 +21,7 @@ export default function RootLayout({ children }) {
         {children}
         <Toaster
           position="top-center"
-          richColors
-          visibleToasts={3}
-          toastOptions={{
-            className: "max-sm:top-0 max-sm:right-0 max-sm:w-full",
-          }}
+          className="max-sm:top-[10%]" // Adjust vertical position as needed
         />
       </body>
     </html>

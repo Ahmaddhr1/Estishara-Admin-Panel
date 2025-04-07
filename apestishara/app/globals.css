@@ -16,6 +16,16 @@ body {
   outline: none;
 }
 
+/* Mobile Toaster Fix */
+@media (max-width: 640px) {
+  [data-radix-toast] {
+    width: 90vw !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+  }
+}
+
 @layer base {
   :root {
     --radius: 0.5rem;
