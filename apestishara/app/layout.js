@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
         {children}
         <Toaster
           position="top-center"
-          className="max-sm:top-[10%]" // Adjust vertical position as needed
+          className="max-sm:top-[10%]" 
         />
       </body>
     </html>
