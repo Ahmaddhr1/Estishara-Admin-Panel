@@ -4,6 +4,8 @@ import { LogOut, Menu, X, ListCollapse } from "lucide-react";
 import tabs from "@/utils/SideBarTabs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Logo from "@/public/logo1.png"
 
 export function MySideBar() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -45,7 +47,7 @@ export function MySideBar() {
                 isSidebarCollapsed ? "text-base" : "text-3xl"
               } overflow-y-hidden duration-200`}
             >
-              {!isSidebarCollapsed && "Estishara"}
+              {!isSidebarCollapsed && <Image src={Logo} width={150} height={100} />}
             </span>
           )}
           <button
