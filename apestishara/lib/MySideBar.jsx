@@ -47,7 +47,7 @@ export function MySideBar() {
                 isSidebarCollapsed ? "text-base" : "text-3xl"
               } overflow-y-hidden duration-200`}
             >
-              {!isSidebarCollapsed && <Image src={Logo} width={150} height={100} />}
+              {!isSidebarCollapsed && <Image alt="logo" src={Logo} width={150} height={100} />}
             </span>
           )}
           <button

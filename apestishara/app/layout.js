@@ -12,18 +12,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata = {
+  title: "Estishara",
+  description: "Admin Panel",
+  icons: {
+    icon: "/pulse.png",
+  },
+};
+
 export default function RootLayout({ children }) {
   return (
-    <QueryProvider  >
-    <html lang="en">
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex max-h-[100vh]`}
-      >
-        {children}
-        <Toaster/>
-      </body>
-    </html>
+    <QueryProvider>
+      <html lang="en">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex max-h-[100vh]`}
+        >
+          {children}
+          <Toaster />
+        </body>
+      </html>
     </QueryProvider>
   );
 }

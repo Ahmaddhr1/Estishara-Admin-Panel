@@ -61,6 +61,7 @@ export default function Home() {
         <div className="flex items-center md:items-start flex-col">
           <Image 
           src={Logo}
+          alt="Logo"
           width="200"
           height="100"
           className="mb-10 md:w-[300px]"
