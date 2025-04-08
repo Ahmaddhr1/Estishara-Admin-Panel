@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table";
 import { toast } from "sonner"; // ✅ sonner toast
 
+// Fetch specialities without authorization
 const fetchSpecialities = async () => {
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/speciality/`
@@ -76,15 +77,20 @@ const Page = () => {
         description: "description should be here",
       };
 
+      const token = sessionStorage.getItem("token"); // Get the JWT token
+      const headers = { Authorization: `Bearer ${token}` }; // Set the token in headers
+
       if (id) {
         await axios.put(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/speciality/${id}`,
-          payload
+          payload,
+          { headers }
         );
       } else {
         await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/speciality/`,
-          payload
+          payload,
+          { headers }
         );
       }
     },
@@ -107,10 +113,15 @@ const Page = () => {
   });
 
   const deleteSpeciality = useMutation({
-    mutationFn: (id) =>
-      axios.delete(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/speciality/${id}`
-      ),
+    mutationFn: (id) => {
+      const token = sessionStorage.getItem("token"); // Get the JWT token
+      const headers = { Authorization: `Bearer ${token}` }; // Set the token in headers
+
+      return axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/speciality/${id}`,
+        { headers }
+      );
+    },
     onSuccess: () => {
       toast.success("Speciality deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["specialities"] });

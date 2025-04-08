@@ -20,8 +20,14 @@ import {
 } from "@/components/ui/table";
 import { toast } from "sonner"; // ✅ using sonner toast now
 
+// Fetch admins
 const fetchAdmins = async () => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`);
+  const token = sessionStorage.getItem("token"); // assuming the token is stored in sessionStorage
+  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return data;
 };
 
@@ -39,8 +45,14 @@ const Page = () => {
   });
 
   const createAdmin = useMutation({
-    mutationFn: (formData) =>
-      axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`, formData),
+    mutationFn: (formData) => {
+      const token = sessionStorage.getItem("token");
+      return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    },
     onSuccess: () => {
       toast.success("Admin created successfully");
       queryClient.invalidateQueries({ queryKey: ["admins"] });
@@ -56,7 +68,14 @@ const Page = () => {
   });
 
   const deleteAdmin = useMutation({
-    mutationFn: (id) => axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/${id}`),
+    mutationFn: (id) => {
+      const token = sessionStorage.getItem("token");
+      return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    },
     onSuccess: () => {
       toast.success("Admin deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["admins"] });
