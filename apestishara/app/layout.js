@@ -17,6 +17,7 @@ export const metadata = {
   description: "Admin Panel",
   icons: {
     icon: "/pulse.png",
+    apple: "/pulse.png",
   },
 };
 
