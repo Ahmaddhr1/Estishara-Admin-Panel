@@ -13,11 +13,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-const Alert = ({ loading, trigger, title, des, action, func, para, Icon }) => {
+const Alert = ({ loading, trigger, title, des, action, func, para, Icon ,variant="destructive" }) => {
   return (
     <AlertDialog className="px-3 md:px-0">
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" disabled={loading}>
+        <Button variant={variant} disabled={loading}>
           {Icon && <Icon className="h-4 w-4" />}
           <span className="md:flex hidden">{trigger}</span>
         </Button>

@@ -21,7 +21,7 @@ import Loading from "@/lib/Loading";
 
 // Fetch patients with authorization token
 const fetchPatients = async () => {
-  const token = sessionStorage.getItem("token"); // Get the JWT token
+  const token = sessionStorage.getItem("token"); 
   const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/patient`, {
     headers: {
       Authorization: `Bearer ${token}`, // Add the token to the headers
@@ -35,7 +35,7 @@ const deletePatient = async (id) => {
   const token = sessionStorage.getItem("token"); // Get the JWT token
   await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/patient/${id}`, {
     headers: {
-      Authorization: `Bearer ${token}`, // Add the token to the headers
+      Authorization: `Bearer ${token}`,
     },
   });
 };
