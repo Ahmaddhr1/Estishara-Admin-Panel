@@ -1,15 +1,22 @@
-
-"use client";
-
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import Loading from "@/lib/Loading";
 
 const fetchDoctors = async () => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/approved`);
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/`
+  );
+  console.log("DATAA: " + data);
   return data;
 };
 
@@ -26,6 +33,7 @@ const Doctors = ({ searchTerm }) => {
       );
     },
   });
+  console.log(doctors);
 
   const filteredDoctors = useMemo(() => {
     if (!Array.isArray(doctors)) return [];
@@ -78,9 +86,7 @@ const Doctors = ({ searchTerm }) => {
               <TableCell>{doctor.email || "-"}</TableCell>
               <TableCell>{doctor.specialityId?.title || "-"}</TableCell>
               <TableCell>{doctor.phoneNumber || "-"}</TableCell>
-              <TableCell>
-                
-              </TableCell>
+              <TableCell></TableCell>
             </TableRow>
           ))
         )}

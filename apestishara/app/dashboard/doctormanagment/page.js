@@ -1,25 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
-import { toast } from "sonner";
-import { Trash2, Search, X, UserRoundCheck } from "lucide-react";
+import React, { useState} from "react";
 import PageHeader from "@/lib/PageHeader";
-import Alert from "@/lib/Alert";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import PendingDoctors from "@/lib/PendingDoctors";
 import Doctors from "@/lib/Doctors";
+import { Search } from "lucide-react";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("pending");
@@ -39,7 +27,7 @@ const Page = () => {
             Pending Doctors
           </Button>
           <Button
-           variant={activeTab=== "approved"? "default" :"outline"}
+           variant={activeTab=== "approved" ? "default" :"outline"}
             onClick={() => setActiveTab("approved")}
           >
             Approved Doctors

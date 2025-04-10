@@ -1,7 +1,4 @@
-
-"use client";
-
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
@@ -11,18 +8,28 @@ import Alert from "@/lib/Alert";
 import Loading from "@/lib/Loading";
 
 const fetchPendingDoctors = async () => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/pending`);
-  return data;
-};
-
-const approveDoctor = async (id) => {
-  const { data } = await axios.put(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctors/approve/${id}`
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/pending`
   );
   return data;
 };
 
-const PendingDoctors = ({ searchTerm, deleteLoading, approveLoading }) => {
+const approveDoctor = async (id) => {
+  const token = sessionStorage.getItem("token");
+  const baseUrl=process.env.NEXT_PUBLIC_BACKEND_URL
+  const { data } = await axios.put(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/approve/${id}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return data;
+};
+
+const PendingDoctors = ({ searchTerm }) => {
   const queryClient = useQueryClient();
   const { data: doctors = [], isLoading } = useQuery({
     queryKey: ["pendingDoctors"],
@@ -37,8 +44,18 @@ const PendingDoctors = ({ searchTerm, deleteLoading, approveLoading }) => {
     },
   });
 
+  const [approveLoading, setApproveLoading] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(null);
+
   const deleteMutation = useMutation({
-    mutationFn: (id) => axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`),
+    mutationFn: (id) => {
+      const token = sessionStorage.getItem("token");
+      return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    },
     onSuccess: () => {
       toast.success("Doctor deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["pendingDoctors"] });
@@ -48,7 +65,7 @@ const PendingDoctors = ({ searchTerm, deleteLoading, approveLoading }) => {
         err instanceof Error ? err.message : "Failed to delete doctor"
       );
     },
-    onSettled: () => setDeleteLoading(false),
+    onSettled: () => setDeleteLoading(null),
   });
 
   const approveMutation = useMutation({
@@ -62,16 +79,16 @@ const PendingDoctors = ({ searchTerm, deleteLoading, approveLoading }) => {
         err instanceof Error ? err.message : "Failed to approve doctor"
       );
     },
-    onSettled: () => setApproveLoading(false),
+    onSettled: () => setApproveLoading(null),
   });
 
   const handleDelete = (id) => {
-    setDeleteLoading(true);
+    setDeleteLoading(id);
     deleteMutation.mutate(id);
   };
 
   const handleApprove = (id) => {
-    setApproveLoading(true);
+    setApproveLoading(id);
     approveMutation.mutate(id);
   };
 
@@ -128,7 +145,7 @@ const PendingDoctors = ({ searchTerm, deleteLoading, approveLoading }) => {
               <TableCell>{doctor.phoneNumber || "-"}</TableCell>
               <TableCell className="flex gap-2">
                 <Alert
-                  loading={approveLoading}
+                  loading={approveLoading === doctor._id}
                   trigger="Approve"
                   title="Are you sure?"
                   des="This will permanently accept the doctor and will be officially visible to patients."
@@ -139,7 +156,7 @@ const PendingDoctors = ({ searchTerm, deleteLoading, approveLoading }) => {
                   variant="outline"
                 />
                 <Alert
-                  loading={deleteLoading}
+                  loading={deleteLoading === doctor._id}
                   trigger="Delete"
                   title="Are you sure?"
                   des="This will permanently delete the doctor record."
