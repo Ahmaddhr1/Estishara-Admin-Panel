@@ -1,18 +1,15 @@
 import {
     Home,
-    LogOut,
-    TimerIcon,
     User,
     ListCheck,
-    Menu,
-    X,
     Pill,
     Bell,
+    FolderKanban,
   } from "lucide-react";
 
 const tabs =[
     { label: 'Dashboard', path: '/dashboard',icon:<Home /> },
-    { label: 'Pending Doctors', path: '/dashboard/pendingdoctors',icon:<TimerIcon />},
+    { label: 'Doctors Managment', path: '/dashboard/doctormanagment',icon:<FolderKanban />},
     { label: 'Patients', path: '/dashboard/patients', icon:<Pill />},
     { label: 'Specialities', path: '/dashboard/specialities' ,icon:<ListCheck />},
     { label: 'Notifications', path: '/dashboard/notifications', icon:<Bell />},
