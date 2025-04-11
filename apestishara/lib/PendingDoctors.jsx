@@ -3,7 +3,15 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 import { Trash2, UserRoundCheck } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import Alert from "@/lib/Alert";
 import Loading from "@/lib/Loading";
 
@@ -11,12 +19,12 @@ const fetchPendingDoctors = async () => {
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/pending`
   );
+  console.log(data);
   return data;
 };
 
 const approveDoctor = async (id) => {
   const token = sessionStorage.getItem("token");
-  const baseUrl=process.env.NEXT_PUBLIC_BACKEND_URL
   const { data } = await axios.put(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/approve/${id}`,
     {},
@@ -50,11 +58,14 @@ const PendingDoctors = ({ searchTerm }) => {
   const deleteMutation = useMutation({
     mutationFn: (id) => {
       const token = sessionStorage.getItem("token");
-      return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      return axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     },
     onSuccess: () => {
       toast.success("Doctor deleted successfully");
@@ -116,6 +127,7 @@ const PendingDoctors = ({ searchTerm }) => {
 
   return (
     <Table className="mt-3">
+      <TableCaption>A list of all Pending Doctor.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>#</TableHead>
@@ -123,6 +135,7 @@ const PendingDoctors = ({ searchTerm }) => {
           <TableHead>Email</TableHead>
           <TableHead>Specialty</TableHead>
           <TableHead>Phone Number</TableHead>
+          <TableHead>Documents</TableHead>
           <TableHead>Action</TableHead>
         </TableRow>
       </TableHeader>
@@ -137,32 +150,54 @@ const PendingDoctors = ({ searchTerm }) => {
           </TableRow>
         ) : (
           filteredDoctors.map((doctor, index) => (
-            <TableRow key={doctor._id}>
+            <TableRow key={doctor?._id}>
               <TableCell>{index + 1}</TableCell>
-              <TableCell>{doctor.name || "-"}</TableCell>
-              <TableCell>{doctor.email || "-"}</TableCell>
-              <TableCell>{doctor.specialityId?.title || "-"}</TableCell>
-              <TableCell>{doctor.phoneNumber || "-"}</TableCell>
+              <TableCell>{doctor?.name || "-"}</TableCell>
+              <TableCell>{doctor?.email || "-"}</TableCell>
+              <TableCell>{doctor?.specialityId?.title || "-"}</TableCell>
+              <TableCell>
+                <a
+                  href={`https://wa.me/+${doctor?.phoneNumber}`}
+                  target="_blank"
+                  className="text-green-600 underline"
+                >
+                  Chat on WhatsApp
+                </a>
+              </TableCell>
+              <TableCell>
+                {doctor?.documents?.length > 0
+                  ? doctor?.documents?.map((doc, index) => (
+                      <a
+                        key={index}
+                        href={doc}
+                        className="underline text-primary mr-2"
+                        target="_blank"
+                      >
+                        Document {index + 1}
+                      </a>
+                    ))
+                  : "-"}
+              </TableCell>
               <TableCell className="flex gap-2">
                 <Alert
-                  loading={approveLoading === doctor._id}
+                  loading={approveLoading === doctor?._id}
                   trigger="Approve"
                   title="Are you sure?"
                   des="This will permanently accept the doctor and will be officially visible to patients."
                   action="Approve"
                   func={handleApprove}
-                  para={doctor._id}
+                  para={doctor?._id}
                   Icon={UserRoundCheck}
                   variant="outline"
                 />
                 <Alert
-                  loading={deleteLoading === doctor._id}
+                  loading={deleteLoading === doctor?._id}
                   trigger="Delete"
                   title="Are you sure?"
                   des="This will permanently delete the doctor record."
                   action="Delete"
                   func={handleDelete}
-                  para={doctor._id}
+                  para={doctor?._id}
                   Icon={Trash2}
                 />
               </TableCell>

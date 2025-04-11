@@ -187,7 +187,10 @@ const Page = () => {
       ) : (
         <div className="mt-5">
           {isFormVisible && (
-            <form onSubmit={handleSubmit} className="mb-6 p-4 border rounded-lg">
+            <form
+              onSubmit={handleSubmit}
+              className="mb-6 p-4 border rounded-lg"
+            >
               <div className="space-y-4">
                 <Input
                   type="text"

@@ -167,7 +167,13 @@ const Page = () => {
                 <TableCell>{patient.name || "-"}</TableCell>
                 <TableCell>{patient.email || "-"}</TableCell>
                 <TableCell>{patient.age || "-"}</TableCell>
-                <TableCell>{patient.phoneNumber || "-"}</TableCell>
+                <TableCell>                <a
+                  href={`https://wa.me/+${patient.phoneNumber}`}
+                  target="_blank"
+                  className="text-green-600 underline"
+                >
+                  Chat on WhatsApp
+                </a></TableCell>
                 <TableCell>
                   <Alert
                     loading={deleteLoading}
