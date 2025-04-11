@@ -173,8 +173,9 @@ const PendingDoctors = ({ searchTerm }) => {
                         className="underline text-primary mr-2"
                         target="_blank"
                       >
-                        Document {index + 1}
+                        Document {index + 1}  
                       </a>
+                      
                     ))
                   : "-"}
               </TableCell>
