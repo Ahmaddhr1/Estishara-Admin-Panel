@@ -35,7 +35,6 @@ const fetchDashboardData = async () => {
 
 const AdminDashboard = () => {
   const [filter, setFilter] = useState("week");
-  const [selectedSpeciality, setSelectedSpeciality] = useState(null);
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["dashboard"],
@@ -85,13 +84,6 @@ const AdminDashboard = () => {
     );
   };
 
-  const handleSliceClick = (data) => {
-    if (data?.name) {
-      setSelectedSpeciality(data.name);
-      alert(`Navigate to doctor list with speciality: ${data.name}`);
-    }
-  };
-
   const handleDownload = () => {
     window.print();
   };
@@ -100,18 +92,19 @@ const AdminDashboard = () => {
     <section className="p-6 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-        <div className="flex gap-2">
-          <Button
-            variant={filter === "week" ? "default" : "outline"}
-            onClick={() => setFilter("week")}
+        <div className="flex gap-2 items-center">
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="border px-4 py-2 rounded-md text-sm focus:outline-none focus:ring"
           >
-            This Week
-          </Button>
-          <Button
-            variant={filter === "today" ? "default" : "outline"}
-            onClick={() => setFilter("today")}
-          >
-            Today
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="week">This Week</option>
+            <option value="lastWeek">Last Week</option>
+          </select>
+          <Button variant="outline" onClick={handleDownload} className="gap-1">
+            <Download size={16} /> Print/Export
           </Button>
         </div>
       </div>
@@ -186,8 +179,8 @@ const AdminDashboard = () => {
               <YAxis allowDecimals={false} />
               <Tooltip />
               <Bar
-                dataKey={filter === "week" ? "Week" : "Today"}
-                fill={filter === "week" ? "#34d399" : "#6366f1"}
+                dataKey={filter === "week" || filter === "lastWeek" ? "Week" : "Today"}
+                fill={filter === "week" || filter === "lastWeek" ? "#34d399" : "#6366f1"}
                 radius={[8, 8, 0, 0]}
               />
             </BarChart>
@@ -211,7 +204,6 @@ const AdminDashboard = () => {
                 outerRadius={100}
                 fill="#8884d8"
                 label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
-                onClick={handleSliceClick}
               >
                 {pieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
