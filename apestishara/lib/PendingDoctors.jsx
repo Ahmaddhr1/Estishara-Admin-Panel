@@ -1,3 +1,4 @@
+"use client";
 import React, { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -16,11 +17,8 @@ import Alert from "@/lib/Alert";
 import Loading from "@/lib/Loading";
 
 const fetchPendingDoctors = async () => {
-  const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/pending`
-  );
-  console.log(data);
-  return data;
+  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/pending`);
+  return Array.isArray(data) ? data : [];
 };
 
 const approveDoctor = async (id) => {
@@ -28,54 +26,38 @@ const approveDoctor = async (id) => {
   const { data } = await axios.put(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/approve/${id}`,
     {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
+    { headers: { Authorization: `Bearer ${token}` } }
   );
   return data;
 };
 
-const PendingDoctors = ({ searchTerm }) => {
+const PendingDoctors = ({ searchTerm = "" }) => {
   const queryClient = useQueryClient();
+  const [approveLoading, setApproveLoading] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(null);
+
   const { data: doctors = [], isLoading } = useQuery({
     queryKey: ["pendingDoctors"],
     queryFn: fetchPendingDoctors,
     staleTime: 5 * 60 * 1000,
+    retry: false,
     onError: (err) => {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : "An unknown error occurred while fetching doctors"
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to fetch pending doctors");
     },
   });
-
-  const [approveLoading, setApproveLoading] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(null);
 
   const deleteMutation = useMutation({
     mutationFn: (id) => {
       const token = sessionStorage.getItem("token");
-      return axios.delete(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
     },
     onSuccess: () => {
       toast.success("Doctor deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["pendingDoctors"] });
     },
-    onError: (err) => {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete doctor"
-      );
-    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Delete failed"),
     onSettled: () => setDeleteLoading(null),
   });
 
@@ -85,11 +67,7 @@ const PendingDoctors = ({ searchTerm }) => {
       toast.success("Doctor approved successfully");
       queryClient.invalidateQueries({ queryKey: ["pendingDoctors"] });
     },
-    onError: (err) => {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to approve doctor"
-      );
-    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Approval failed"),
     onSettled: () => setApproveLoading(null),
   });
 
@@ -104,36 +82,25 @@ const PendingDoctors = ({ searchTerm }) => {
   };
 
   const filteredDoctors = useMemo(() => {
-    if (!Array.isArray(doctors)) return [];
-
-    const lowerSearchTerm = searchTerm.toLowerCase();
-
-    return doctors.filter((doctor) => {
-      const name = String(doctor.name || "").toLowerCase();
-      const email = String(doctor.email || "").toLowerCase();
-      const specialty = String(doctor.specialityId?.title || "").toLowerCase();
-
-      return (
-        name.includes(lowerSearchTerm) ||
-        email.includes(lowerSearchTerm) ||
-        specialty.includes(lowerSearchTerm)
-      );
-    });
+    const term = searchTerm.toLowerCase();
+    return doctors.filter((d) =>
+      [d.name, d.email, d.specialityId?.title].some((v) =>
+        (v || "").toLowerCase().includes(term)
+      )
+    );
   }, [searchTerm, doctors]);
 
-  if (isLoading) {
-    return <Loading />;
-  }
+  if (isLoading) return <Loading />;
 
   return (
     <Table className="mt-3">
-      <TableCaption>A list of all Pending Doctor.</TableCaption>
+      <TableCaption>List of all pending doctors</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>#</TableHead>
           <TableHead>Name</TableHead>
           <TableHead>Email</TableHead>
-          <TableHead>Specialty</TableHead>
+          <TableHead>Speciality</TableHead>
           <TableHead>Phone Number</TableHead>
           <TableHead>Documents</TableHead>
           <TableHead>Action</TableHead>
@@ -142,63 +109,62 @@ const PendingDoctors = ({ searchTerm }) => {
       <TableBody>
         {filteredDoctors.length === 0 ? (
           <TableRow>
-            <TableCell colSpan={6} className="text-center">
-              {searchTerm
-                ? "No matching doctors found"
-                : "No doctors available"}
+            <TableCell colSpan={7} className="text-center">
+              {searchTerm ? "No matching doctors found" : "No pending doctors available"}
             </TableCell>
           </TableRow>
         ) : (
-          filteredDoctors.map((doctor, index) => (
-            <TableRow key={doctor?._id}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{doctor?.name || "-"}</TableCell>
-              <TableCell>{doctor?.email || "-"}</TableCell>
-              <TableCell>{doctor?.specialityId?.title || "-"}</TableCell>
+          filteredDoctors.map((doc, i) => (
+            <TableRow key={doc._id}>
+              <TableCell>{i + 1}</TableCell>
+              <TableCell>{doc.name || "-"}</TableCell>
+              <TableCell>{doc.email || "-"}</TableCell>
+              <TableCell>{doc.specialityId?.title || "-"}</TableCell>
               <TableCell>
                 <a
-                  href={`https://wa.me/+${doctor?.phoneNumber}`}
+                  href={`https://wa.me/+${doc.phoneNumber}`}
                   target="_blank"
                   className="text-green-600 underline"
                 >
-                  Chat on WhatsApp
+                  WhatsApp
                 </a>
               </TableCell>
               <TableCell>
-                {doctor?.documents?.length > 0
-                  ? doctor?.documents?.map((doc, index) => (
-                      <a
-                        key={index}
-                        href={doc}
-                        className="underline text-primary mr-2"
-                        target="_blank"
-                      >
-                        Document {index + 1}  
-                      </a>
-                      
-                    ))
-                  : "-"}
+                {doc.documents?.length > 0 ? (
+                  doc.documents.map((url, j) => (
+                    <a
+                      key={j}
+                      href={url}
+                      target="_blank"
+                      className="underline text-primary mr-2"
+                    >
+                      Doc {j + 1}
+                    </a>
+                  ))
+                ) : (
+                  "-"
+                )}
               </TableCell>
               <TableCell className="flex gap-2">
                 <Alert
-                  loading={approveLoading === doctor?._id}
+                  loading={approveLoading === doc._id}
                   trigger="Approve"
-                  title="Are you sure?"
-                  des="This will permanently accept the doctor and will be officially visible to patients."
+                  title="Approve Doctor?"
+                  des="This doctor will be publicly available to patients."
                   action="Approve"
                   func={handleApprove}
-                  para={doctor?._id}
+                  para={doc._id}
                   Icon={UserRoundCheck}
                   variant="outline"
                 />
                 <Alert
-                  loading={deleteLoading === doctor?._id}
+                  loading={deleteLoading === doc._id}
                   trigger="Delete"
-                  title="Are you sure?"
-                  des="This will permanently delete the doctor record."
+                  title="Delete Doctor?"
+                  des="This will permanently delete the doctor's record."
                   action="Delete"
                   func={handleDelete}
-                  para={doctor?._id}
+                  para={doc._id}
                   Icon={Trash2}
                 />
               </TableCell>

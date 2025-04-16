@@ -172,7 +172,7 @@ const Page = () => {
                   target="_blank"
                   className="text-green-600 underline"
                 >
-                  Chat on WhatsApp
+                  WhatsApp
                 </a></TableCell>
                 <TableCell>
                   <Alert
