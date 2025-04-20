@@ -15,13 +15,16 @@ export default function Home() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  const token = localStorage.getItem("token");  // Use localStorage for login persistence
-
   useEffect(() => {
-    if (token) {
-      router.push("/dashboard");
+    if (typeof window !== "undefined") {
+      // Check if the code is running in the browser
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        router.push("/dashboard");
+      }
     }
-  }, [token, router]);
+  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
