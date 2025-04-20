@@ -21,23 +21,29 @@ import Loading from "@/lib/Loading";
 
 // Fetch patients with authorization token
 const fetchPatients = async () => {
-  const token = sessionStorage.getItem("token"); 
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/patient`, {
-    headers: {
-      Authorization: `Bearer ${token}`, // Add the token to the headers
-    },
-  });
+  const token = localStorage.getItem("token");
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/patient`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token to the headers
+      },
+    }
+  );
   return data;
 };
 
 // Delete patient with authorization token
 const deletePatient = async (id) => {
-  const token = sessionStorage.getItem("token"); // Get the JWT token
-  await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/patient/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const token = localStorage.getItem("token"); // Get the JWT token
+  await axios.delete(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/patient/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 };
 
 const Page = () => {
@@ -45,10 +51,7 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  const {
-    data: patients = [],
-    isLoading,
-  } = useQuery({
+  const { data: patients = [], isLoading } = useQuery({
     queryKey: ["patients"],
     queryFn: fetchPatients,
     staleTime: 5 * 60 * 1000,
@@ -69,9 +72,7 @@ const Page = () => {
     },
     onError: (err) => {
       toast.error(
-        err instanceof Error
-          ? err.message
-          : "Failed to delete patient"
+        err instanceof Error ? err.message : "Failed to delete patient"
       );
     },
     onSettled: () => setDeleteLoading(false),
@@ -167,13 +168,16 @@ const Page = () => {
                 <TableCell>{patient.name || "-"}</TableCell>
                 <TableCell>{patient.email || "-"}</TableCell>
                 <TableCell>{patient.age || "-"}</TableCell>
-                <TableCell>                <a
-                  href={`https://wa.me/+${patient.phoneNumber}`}
-                  target="_blank"
-                  className="text-green-600 underline"
-                >
-                  WhatsApp
-                </a></TableCell>
+                <TableCell>
+                  {" "}
+                  <a
+                    href={`https://wa.me/+${patient.phoneNumber}`}
+                    target="_blank"
+                    className="text-green-600 underline"
+                  >
+                    WhatsApp
+                  </a>
+                </TableCell>
                 <TableCell>
                   <Alert
                     loading={deleteLoading}

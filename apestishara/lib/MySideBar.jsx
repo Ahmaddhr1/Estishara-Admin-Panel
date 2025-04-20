@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { LogOut, Menu, X, ListCollapse } from 'lucide-react';
-import Image from 'next/image';
-import tabs from '@/utils/SideBarTabs';
-import Logo from '@/public/logo1.png';
+import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { LogOut, Menu, X, ListCollapse } from "lucide-react";
+import Image from "next/image";
+import tabs from "@/utils/SideBarTabs";
+import Logo from "@/public/logo1.png";
 
 export function MySideBar() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -14,12 +14,14 @@ export function MySideBar() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const toggleMobileSidebar = () => setIsMobileSidebarOpen(!isMobileSidebarOpen);
-  const toggleSidebarCollapse = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+  const toggleMobileSidebar = () =>
+    setIsMobileSidebarOpen(!isMobileSidebarOpen);
+  const toggleSidebarCollapse = () =>
+    setIsSidebarCollapsed(!isSidebarCollapsed);
   const Logout = () => {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('admin');
-    router.push('/');
+    localStorage.removeItem("token");
+    localStorage.removeItem("admin");
+    router.push("/");
   };
 
   const renderNavLink = (tab, index, isCollapsed) => {
@@ -29,12 +31,14 @@ export function MySideBar() {
         key={index}
         href={tab.path}
         className={`flex items-center px-4 py-3 transition-all rounded-r-lg ${
-          isActive ? 'bg-gray-700 text-white' : 'hover:bg-gray-700'
+          isActive ? "bg-gray-700 text-white" : "hover:bg-gray-700"
         }`}
         onClick={() => setIsMobileSidebarOpen(false)}
       >
         <span className="flex-shrink-0">{tab.icon}</span>
-        <span className={`ml-3 ${isCollapsed ? 'hidden' : 'block'}`}>{tab.label}</span>
+        <span className={`ml-3 ${isCollapsed ? "hidden" : "block"}`}>
+          {tab.label}
+        </span>
       </Link>
     );
   };
@@ -55,7 +59,7 @@ export function MySideBar() {
       {/* Desktop Sidebar */}
       <aside
         className={`hidden lg:flex flex-col max-h-[100vh] bg-primary text-white transition-all duration-300 overflow-x-hidden ${
-          isSidebarCollapsed ? 'w-20' : 'w-64'
+          isSidebarCollapsed ? "w-20" : "w-64"
         }`}
       >
         <div className="px-4 py-6 flex justify-between items-center duration-200">
@@ -66,12 +70,18 @@ export function MySideBar() {
             onClick={toggleSidebarCollapse}
             className="p-2 text-white rounded-lg hover:bg-gray-700 ml-[-8px]"
           >
-            {isSidebarCollapsed ? <ListCollapse /> : <ListCollapse className="rotate-180" />}
+            {isSidebarCollapsed ? (
+              <ListCollapse />
+            ) : (
+              <ListCollapse className="rotate-180" />
+            )}
           </button>
         </div>
 
         <nav className="flex-1 space-y-2 overflow-y-auto">
-          {tabs.map((tab, index) => renderNavLink(tab, index, isSidebarCollapsed))}
+          {tabs.map((tab, index) =>
+            renderNavLink(tab, index, isSidebarCollapsed)
+          )}
         </nav>
 
         <button
@@ -87,7 +97,9 @@ export function MySideBar() {
       <>
         <div
           className={`fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300 ${
-            isMobileSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            isMobileSidebarOpen
+              ? "opacity-100"
+              : "opacity-0 pointer-events-none"
           }`}
           onClick={toggleMobileSidebar}
         />
@@ -95,7 +107,9 @@ export function MySideBar() {
         <aside
           className={`fixed top-0 left-0 w-64 h-full bg-primary text-white z-50 lg:hidden 
                       transform transition-transform duration-300 ease-in-out ${
-                        isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+                        isMobileSidebarOpen
+                          ? "translate-x-0"
+                          : "-translate-x-full"
                       }`}
         >
           <div className="px-4 py-6 flex justify-between items-center">

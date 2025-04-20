@@ -17,12 +17,14 @@ import Alert from "@/lib/Alert";
 import Loading from "@/lib/Loading";
 
 const fetchPendingDoctors = async () => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/pending`);
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/pending`
+  );
   return Array.isArray(data) ? data : [];
 };
 
 const approveDoctor = async (id) => {
-  const token = sessionStorage.getItem("token");
+  const token = localStorage.getItem("token");
   const { data } = await axios.put(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/approve/${id}`,
     {},
@@ -42,22 +44,28 @@ const PendingDoctors = ({ searchTerm = "" }) => {
     staleTime: 5 * 60 * 1000,
     retry: false,
     onError: (err) => {
-      toast.error(err instanceof Error ? err.message : "Failed to fetch pending doctors");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to fetch pending doctors"
+      );
     },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => {
-      const token = sessionStorage.getItem("token");
-      return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const token = localStorage.getItem("token");
+      return axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
     },
     onSuccess: () => {
       toast.success("Doctor deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["pendingDoctors"] });
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : "Delete failed"),
+    onError: (err) =>
+      toast.error(err instanceof Error ? err.message : "Delete failed"),
     onSettled: () => setDeleteLoading(null),
   });
 
@@ -67,7 +75,8 @@ const PendingDoctors = ({ searchTerm = "" }) => {
       toast.success("Doctor approved successfully");
       queryClient.invalidateQueries({ queryKey: ["pendingDoctors"] });
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : "Approval failed"),
+    onError: (err) =>
+      toast.error(err instanceof Error ? err.message : "Approval failed"),
     onSettled: () => setApproveLoading(null),
   });
 
@@ -110,7 +119,9 @@ const PendingDoctors = ({ searchTerm = "" }) => {
         {filteredDoctors.length === 0 ? (
           <TableRow>
             <TableCell colSpan={7} className="text-center">
-              {searchTerm ? "No matching doctors found" : "No pending doctors available"}
+              {searchTerm
+                ? "No matching doctors found"
+                : "No pending doctors available"}
             </TableCell>
           </TableRow>
         ) : (
@@ -130,20 +141,18 @@ const PendingDoctors = ({ searchTerm = "" }) => {
                 </a>
               </TableCell>
               <TableCell>
-                {doc.documents?.length > 0 ? (
-                  doc.documents.map((url, j) => (
-                    <a
-                      key={j}
-                      href={url}
-                      target="_blank"
-                      className="underline text-primary mr-2"
-                    >
-                      Doc {j + 1}
-                    </a>
-                  ))
-                ) : (
-                  "-"
-                )}
+                {doc.documents?.length > 0
+                  ? doc.documents.map((url, j) => (
+                      <a
+                        key={j}
+                        href={url}
+                        target="_blank"
+                        className="underline text-primary mr-2"
+                      >
+                        Doc {j + 1}
+                      </a>
+                    ))
+                  : "-"}
               </TableCell>
               <TableCell className="flex gap-2">
                 <Alert

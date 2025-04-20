@@ -77,7 +77,7 @@ const Page = () => {
         description: "description should be here",
       };
 
-      const token = sessionStorage.getItem("token"); // Get the JWT token
+      const token = localStorage.getItem("token"); // Get the JWT token
       const headers = { Authorization: `Bearer ${token}` }; // Set the token in headers
 
       if (id) {
@@ -114,7 +114,7 @@ const Page = () => {
 
   const deleteSpeciality = useMutation({
     mutationFn: (id) => {
-      const token = sessionStorage.getItem("token"); // Get the JWT token
+      const token = localStorage.getItem("token"); // Get the JWT token
       const headers = { Authorization: `Bearer ${token}` }; // Set the token in headers
 
       return axios.delete(

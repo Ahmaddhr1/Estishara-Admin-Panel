@@ -22,12 +22,15 @@ import { toast } from "sonner"; // ✅ using sonner toast now
 
 // Fetch admins
 const fetchAdmins = async () => {
-  const token = sessionStorage.getItem("token"); // assuming the token is stored in sessionStorage
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  const token = localStorage.getItem("token"); // assuming the token is stored in localStorage
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
   return data;
 };
 
@@ -46,12 +49,16 @@ const Page = () => {
 
   const createAdmin = useMutation({
     mutationFn: (formData) => {
-      const token = sessionStorage.getItem("token");
-      return axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const token = localStorage.getItem("token");
+      return axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     },
     onSuccess: () => {
       toast.success("Admin created successfully");
@@ -69,12 +76,15 @@ const Page = () => {
 
   const deleteAdmin = useMutation({
     mutationFn: (id) => {
-      const token = sessionStorage.getItem("token");
-      return axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const token = localStorage.getItem("token");
+      return axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     },
     onSuccess: () => {
       toast.success("Admin deleted successfully");
@@ -110,17 +120,27 @@ const Page = () => {
   };
 
   const storedAdmin =
-    typeof window !== "undefined" ? JSON.parse(sessionStorage.getItem("admin")) : null;
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("admin"))
+      : null;
 
   return (
     <section className="section">
-      <PageHeader name="Admins" buttonText="Add Admin" method={showForm} state={isFormVisible} />
+      <PageHeader
+        name="Admins"
+        buttonText="Add Admin"
+        method={showForm}
+        state={isFormVisible}
+      />
       {isLoading ? (
         <Loading />
       ) : (
         <div className="mt-5">
           {isFormVisible && (
-            <form onSubmit={handleSubmit} className="mb-6 p-4 border rounded-lg">
+            <form
+              onSubmit={handleSubmit}
+              className="mb-6 p-4 border rounded-lg"
+            >
               <div className="space-y-4">
                 <Input
                   type="text"
@@ -171,7 +191,11 @@ const Page = () => {
                       <TableCell>{index + 1}</TableCell>
                       <TableCell className="font-medium">
                         {admin.username}
-                        {isSelf && <span className="text-gray-500 ml-3">(You're logged in)</span>}
+                        {isSelf && (
+                          <span className="text-gray-500 ml-3">
+                            (You're logged in)
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell>
                         {!isSelf ? (

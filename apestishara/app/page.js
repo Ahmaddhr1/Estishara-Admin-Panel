@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import Logo from "@/public/logo2.png"
+import Logo from "@/public/logo2.png";
 import Image from "next/image";
 
 export default function Home() {
@@ -15,6 +15,13 @@ export default function Home() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const token = localStorage.getItem("token");  // Use localStorage for login persistence
+
+  useEffect(() => {
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, [token, router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,14 +48,16 @@ export default function Home() {
 
       if (res?.data.token) {
         const { token, admin } = res.data;
-        sessionStorage.setItem("token", token);
-        sessionStorage.setItem("admin", JSON.stringify(admin));
+        localStorage.setItem("token", token); // Save token in localStorage
+        localStorage.setItem("admin", JSON.stringify(admin)); // Save admin data in localStorage
         router.push("/dashboard");
       } else {
         toast.error(res?.data?.message || "Login failed");
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "An error occurred during login");
+      toast.error(
+        err.response?.data?.message || "An error occurred during login"
+      );
     } finally {
       setIsLoading(false);
     }
@@ -59,12 +68,12 @@ export default function Home() {
       {/* Left Side */}
       <div className="flex flex-col md:items-start items-center justify-center gap-8 w-full md:w-2/3 md:px-20">
         <div className="flex items-center md:items-start flex-col">
-          <Image 
-          src={Logo}
-          alt="Logo"
-          width="200"
-          height="100"
-          className="mb-10 md:w-[300px]"
+          <Image
+            src={Logo}
+            alt="Logo"
+            width="200"
+            height="100"
+            className="mb-10 md:w-[300px]"
           />
           <h1 className="text-xl font-bold">Hey Admin, 👋</h1>
           <p className="text-gray-800">Please enter your credentials</p>
@@ -111,7 +120,8 @@ export default function Home() {
 
         {/* ⚠️ Alert for non-admins */}
         <p className="text-center text-sm text-gray-600 px-4 mt-6">
-          ⚠️ This section is strictly for admins only. Unauthorized access is not allowed.
+          ⚠️ This section is strictly for admins only. Unauthorized access is
+          not allowed.
         </p>
       </div>
 

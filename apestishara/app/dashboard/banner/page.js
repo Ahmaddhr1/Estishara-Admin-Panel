@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 
 const fetchBanners = async () => {
-  const token = sessionStorage.getItem("token");
+  const token = localStorage.getItem("token");
   const { data } = await axios.get(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/banner`,
     {
@@ -47,7 +47,7 @@ const Page = () => {
 
   const deleteMut = useMutation({
     mutationFn: async (id) => {
-      const token = sessionStorage.getItem("token");
+      const token = localStorage.getItem("token");
       const { data } = await axios.delete(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/banner/${id}`,
         {
@@ -94,7 +94,7 @@ const Page = () => {
       if (res.ok && data.url) {
         toast.success("Image uploaded");
 
-        const token = sessionStorage.getItem("token");
+        const token = localStorage.getItem("token");
         await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/banner/`,
           { img: data.url },

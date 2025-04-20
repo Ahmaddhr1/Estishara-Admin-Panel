@@ -17,23 +17,32 @@ import Loading from "@/lib/Loading";
 import Alert from "@/lib/Alert";
 
 const fetchDoctors = async () => {
-  const { data } = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/`);
+  const { data } = await axios.get(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/`
+  );
   return Array.isArray(data) ? data : [];
 };
 
 const deleteDoctor = async (id) => {
-  const token = sessionStorage.getItem("token");
+  const token = localStorage.getItem("token");
   if (!token) throw new Error("Authentication token not found");
-  await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  await axios.delete(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/doctor/${id}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 };
 
 const Doctors = ({ searchTerm = "" }) => {
   const queryClient = useQueryClient();
   const [deleteLoading, setDeleteLoading] = useState(null);
 
-  const { data: doctors = [], isLoading, error } = useQuery({
+  const {
+    data: doctors = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["doctors"],
     queryFn: fetchDoctors,
     staleTime: 5 * 60 * 1000,
@@ -62,7 +71,8 @@ const Doctors = ({ searchTerm = "" }) => {
   }, [searchTerm, doctors]);
 
   if (isLoading) return <Loading />;
-  if (error) return <div className="text-center py-8 text-red-500">{error.message}</div>;
+  if (error)
+    return <div className="text-center py-8 text-red-500">{error.message}</div>;
 
   return (
     <div className="overflow-x-auto">
@@ -83,7 +93,9 @@ const Doctors = ({ searchTerm = "" }) => {
           {filteredDoctors.length === 0 ? (
             <TableRow>
               <TableCell colSpan={7} className="text-center">
-                {searchTerm ? "No matching doctors found" : "No doctors available"}
+                {searchTerm
+                  ? "No matching doctors found"
+                  : "No doctors available"}
               </TableCell>
             </TableRow>
           ) : (
@@ -108,21 +120,19 @@ const Doctors = ({ searchTerm = "" }) => {
                   )}
                 </TableCell>
                 <TableCell>
-                  {doc.documents?.length > 0 ? (
-                    doc.documents.map((url, j) => (
-                      <a
-                        key={j}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="underline text-primary mr-2"
-                      >
-                        Doc {j + 1}
-                      </a>
-                    ))
-                  ) : (
-                    "-"
-                  )}
+                  {doc.documents?.length > 0
+                    ? doc.documents.map((url, j) => (
+                        <a
+                          key={j}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-primary mr-2"
+                        >
+                          Doc {j + 1}
+                        </a>
+                      ))
+                    : "-"}
                 </TableCell>
                 <TableCell>
                   <Alert
