@@ -149,6 +149,7 @@ const Page = () => {
             <TableHead>Email</TableHead>
             <TableHead>Age</TableHead>
             <TableHead>Phone Number</TableHead>
+            <TableHead>Consultations</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -178,6 +179,7 @@ const Page = () => {
                     WhatsApp
                   </a>
                 </TableCell>
+                <TableCell>{patient?.historyConsultations?.length || "-"}</TableCell>
                 <TableCell>
                   <Alert
                     loading={deleteLoading}

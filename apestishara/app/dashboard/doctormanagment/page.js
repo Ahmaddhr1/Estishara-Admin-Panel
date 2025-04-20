@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import PendingDoctors from "@/lib/PendingDoctors";
 import Doctors from "@/lib/Doctors";
-import { Search, X } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
+import Link from "next/link";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("pending");
@@ -13,7 +14,11 @@ const Page = () => {
 
   return (
     <section className="section">
-      <PageHeader name="Doctors Management" isFormVisible={false} />
+      <div className="flex justify-between">
+        <PageHeader name="Doctors Management" isFormVisible={false} />
+        <Link href="/dashboard/doctormanagment/create"><Button>Add Doctor<Plus/></Button></Link>
+      </div>
+
       <div className="mt-5">
         <div className="flex space-x-4 mb-4">
           <Button

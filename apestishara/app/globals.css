@@ -49,6 +49,6 @@ body {
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
   .section {
-    @apply md:mt-0 mt-10 overflow-y-auto;
+    @apply md:mt-10 mt-16 overflow-y-auto;
   }
 }
