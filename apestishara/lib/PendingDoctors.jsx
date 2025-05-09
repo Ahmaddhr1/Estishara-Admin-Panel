@@ -129,7 +129,7 @@ const PendingDoctors = ({ searchTerm = "" }) => {
             <TableRow key={doc._id}>
               <TableCell>{i + 1}</TableCell>
               <TableCell>{doc.name || "-"}</TableCell>
-              <TableCell>{doc.email || "-"}</TableCell>
+               <TableCell><a className="text-primary underline" href={`mailto:${doc.email}`}>{doc.email || "-"}</a></TableCell>
               <TableCell>{doc.specialityId?.title || "-"}</TableCell>
               <TableCell>
                 <a
@@ -137,7 +137,7 @@ const PendingDoctors = ({ searchTerm = "" }) => {
                   target="_blank"
                   className="text-green-600 underline"
                 >
-                  WhatsApp
+                  {doc.phoneNumber}
                 </a>
               </TableCell>
               <TableCell>

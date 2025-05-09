@@ -103,7 +103,7 @@ const Doctors = ({ searchTerm = "" }) => {
               <TableRow key={doc._id}>
                 <TableCell>{i + 1}</TableCell>
                 <TableCell>{doc.name || "-"}</TableCell>
-                <TableCell>{doc.email || "-"}</TableCell>
+                <TableCell><a className="text-primary underline" href={`mailto:${doc.email}`}>{doc.email || "-"}</a></TableCell>
                 <TableCell>{doc.specialityId?.title || "-"}</TableCell>
                 <TableCell>
                   {doc.phoneNumber ? (
@@ -113,7 +113,7 @@ const Doctors = ({ searchTerm = "" }) => {
                       rel="noopener noreferrer"
                       className="text-green-600 underline"
                     >
-                      Chat on WhatsApp
+                      {doc.phoneNumber}
                     </a>
                   ) : (
                     "-"

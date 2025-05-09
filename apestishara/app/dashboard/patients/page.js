@@ -167,7 +167,7 @@ const Page = () => {
               <TableRow key={patient._id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{patient.name || "-"}</TableCell>
-                <TableCell>{patient.email || "-"}</TableCell>
+                <TableCell><a className="text-primary underline" href={`mailto:${patient.email}`}>{patient.email || "-"}</a></TableCell>
                 <TableCell>{patient.age || "-"}</TableCell>
                 <TableCell>
                   {" "}
@@ -176,7 +176,7 @@ const Page = () => {
                     target="_blank"
                     className="text-green-600 underline"
                   >
-                    WhatsApp
+                    {patient.phoneNumber}
                   </a>
                 </TableCell>
                 <TableCell>{patient?.historyConsultations?.length || "-"}</TableCell>
