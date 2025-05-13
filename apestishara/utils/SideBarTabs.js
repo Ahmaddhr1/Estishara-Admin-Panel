@@ -6,6 +6,7 @@ import {
     Bell,
     FolderKanban,
     Image,
+    DollarSign,
   } from "lucide-react";
 
 const tabs =[
@@ -13,7 +14,7 @@ const tabs =[
     { label: 'Doctors Managment', path: '/dashboard/doctormanagment',icon:<FolderKanban />},
     { label: 'Patients', path: '/dashboard/patients', icon:<Pill />},
     { label: 'Specialities', path: '/dashboard/specialities' ,icon:<ListCheck />},
-    // { label: 'Notifications', path: '/dashboard/notifications', icon:<Bell />},
+    { label: 'Payout', path: '/dashboard/payout', icon:<DollarSign />},
     { label: 'Banners', path: '/dashboard/banner', icon:<Image />},
     { label: 'Admins', path: '/dashboard/admins',icon:<User /> },
     

@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "sonner"; // ✅ sonner toast
+import { toast } from "sonner";
 
 // Fetch specialities without authorization
 const fetchSpecialities = async () => {
