@@ -15,6 +15,7 @@ import {
 import { SendIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import Loading from "@/lib/Loading";
 
 // Fetch function for pending payouts
 const fetchPendingPayouts = async () => {
@@ -56,7 +57,7 @@ const Page = () => {
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Loading/>;
   }
 
   if (error) {
