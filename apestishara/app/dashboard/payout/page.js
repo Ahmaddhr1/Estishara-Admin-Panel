@@ -113,7 +113,7 @@ const Page = () => {
                   {consultation?.doctorId?.consultationFees}$
                 </TableCell>
                 <TableCell>
-                  {(consultation?.doctorId?.consultationFees * 80) / 100} $
+                  {(consultation?.doctorId?.consultationFees * 94) / 100} $
                 </TableCell>
                 <TableCell>
                   {consultation?.doctorId?.payoutAccountNumber
