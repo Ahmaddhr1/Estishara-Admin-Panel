@@ -7,6 +7,7 @@ import {
     FolderKanban,
     Image,
     DollarSign,
+    TriangleAlert,
   } from "lucide-react";
 
 const tabs =[
@@ -15,6 +16,7 @@ const tabs =[
     { label: 'Patients', path: '/dashboard/patients', icon:<Pill />},
     { label: 'Specialities', path: '/dashboard/specialities' ,icon:<ListCheck />},
     { label: 'Payout', path: '/dashboard/payout', icon:<DollarSign />},
+    { label: 'Feedbacks', path: '/dashboard/feedbacks', icon:<TriangleAlert />},
     { label: 'Banners', path: '/dashboard/banner', icon:<Image />},
     { label: 'Admins', path: '/dashboard/admins',icon:<User /> },
     
